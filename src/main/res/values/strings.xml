@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">BlutoothVoip</string>
+    <string name="label_contact">Contact</string>
+    <string name="label_call_record">Calls</string>
+    <string name="label_dialer">Dialer</string>
+    <string name="label_message">Message</string>
+    <string name="label_setting">Setting</string>
+    <string name="label_connect_device">Connect Device</string>
+</resources>

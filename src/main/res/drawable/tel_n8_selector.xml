@@ -1,0 +1,6 @@
+<?xml version="8.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@mipmap/ic_tel_n8_press" android:state_selected="true"/>
+    <item android:state_pressed="true" android:drawable="@mipmap/ic_tel_n8_press"/>
+    <item android:drawable="@mipmap/ic_tel_n8"/>
+</selector>

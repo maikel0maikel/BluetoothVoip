@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">BlutoothVoip</string>
+    <string name="label_contact">联系人</string>
+    <string name="label_call_record">通话记录</string>
+    <string name="label_dialer">拨号</string>
+    <string name="label_message">消息</string>
+    <string name="label_setting">设置</string>
+    <string name="label_connect_device">连接设备</string>
+</resources>
