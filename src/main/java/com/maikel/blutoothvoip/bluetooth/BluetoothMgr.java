@@ -5,6 +5,7 @@ import android.bluetooth.BluetoothDevice;
 import android.content.IntentFilter;
 
 import com.maikel.blutoothvoip.BluetoothApplication;
+import com.maikel.blutoothvoip.bluetooth.observ.BluetoothObserver;
 import com.maikel.blutoothvoip.receiver.BluetoothReceiver;
 
 /**
@@ -49,11 +50,24 @@ public class BluetoothMgr implements IBluetoothManager {
 
     @Override
     public void closeBluetooth() {
+        disableBluetooth();
+        unRegistBluetoothReceiver();
+    }
+
+    private boolean disableBluetooth() {
         if (bluetoothManager == null) {
-            return;
+            return true;
         }
         if (bluetoothManager.isEnabled()) {
             bluetoothManager.disable();
         }
+        return false;
     }
+
+    private void unRegistBluetoothReceiver() {
+        if (bluetoothReceiver != null) {
+            BluetoothApplication.getContextInstance().unregisterReceiver(bluetoothReceiver);
+        }
+    }
+
 }

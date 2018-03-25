@@ -23,4 +23,39 @@ public class SettingControl implements ISettingController.SettingController {
     public void start() {
         bluetoothManager.openBluetooth();
     }
+
+    @Override
+    public void end() {
+        bluetoothManager.closeBluetooth();
+    }
+
+    @Override
+    public void notifyOpenState(int openedState) {
+
+    }
+
+    @Override
+    public void notifyBoundState(int boundState) {
+
+    }
+
+    @Override
+    public void notifyConnectedState(int connectedState) {
+
+    }
+
+    @Override
+    public void notifyDeviceFound(String name, String address) {
+
+    }
+
+    @Override
+    public void notifyScanStarted() {
+
+    }
+
+    @Override
+    public void notifyScanFinished() {
+
+    }
 }
