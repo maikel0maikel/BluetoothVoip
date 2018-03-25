@@ -5,6 +5,9 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.OrientationHelper;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -67,15 +70,22 @@ public class SettingFragment extends Fragment implements ISettingController.Sett
         if (mRootView == null) {
             mRootView = inflater.inflate(R.layout.fragment_setting, container, false);
             RecyclerView recyclerView = mRootView.findViewById(R.id.bluetooth_device_rv);
+            LinearLayoutManager layoutManager = new LinearLayoutManager(mActivity);
+            //设置布局管理器
+            recyclerView.setLayoutManager(layoutManager);
+            //设置为垂直布局，这也是默认的
+            layoutManager.setOrientation(OrientationHelper.VERTICAL);
+            //设置增加或删除条目的动画
+            recyclerView.setItemAnimator(new DefaultItemAnimator());
             mSwitchButton = mRootView.findViewById(R.id.connect_device_switch);
             mProgressBar = mRootView.findViewById(R.id.connect_device_progress);
             mSwitchButton.setSwitchChangeListener(changeListener);
             List<BTDevice> devices = new ArrayList<>();
-            for (int i=0;i<10;i++){
-                BTDevice btDevice = new BTDevice("i="+i,"12-bc-io-"+i);
+            for (int i = 0; i < 10; i++) {
+                BTDevice btDevice = new BTDevice("i=" + i, "12-bc-io-" + i);
                 devices.add(btDevice);
             }
-            BluetoothScanAdapter adapter = new BluetoothScanAdapter(mActivity,devices);
+            BluetoothScanAdapter adapter = new BluetoothScanAdapter(mActivity, devices);
             recyclerView.setAdapter(adapter);
             new SettingControl(this);
         }
