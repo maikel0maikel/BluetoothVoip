@@ -29,6 +29,11 @@ public class SettingControl implements ISettingController.SettingController {
     }
 
     @Override
+    public void connectDevice(String address) {
+        bluetoothManager.connectDevice(address);
+    }
+
+    @Override
     public void end() {
         bluetoothManager.closeBluetooth();
     }
@@ -48,6 +53,9 @@ public class SettingControl implements ISettingController.SettingController {
     public void notifyBoundState(int boundState) {
         int state = boundState;
         mView.notifyBoundState(state);
+        if (state == Constants.BTState.BOND_BONDED){
+            bluetoothManager.startConnecting();
+        }
     }
 
     @Override

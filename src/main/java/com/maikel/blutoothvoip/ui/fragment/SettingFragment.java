@@ -57,7 +57,7 @@ public class SettingFragment extends Fragment implements ISettingController.Sett
     private BluetoothScanAdapter.OnItemClickListener onItemClickListener = new BluetoothScanAdapter.OnItemClickListener() {
         @Override
         public void itemClickListener(BTDevice btDevice) {
-            Toast.makeText(mActivity, ""+btDevice.getBtAddress(), Toast.LENGTH_SHORT).show();
+            mController.connectDevice(btDevice.getBtAddress());
         }
     };
 

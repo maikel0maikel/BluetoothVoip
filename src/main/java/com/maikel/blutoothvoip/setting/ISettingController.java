@@ -24,6 +24,8 @@ public interface ISettingController {
 
         void start();
 
+        void connectDevice(String address);
+
         void end();
 
 

@@ -1,5 +1,8 @@
 package com.maikel.blutoothvoip.ui;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -26,12 +29,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private static final int[] TAB_IDS = {R.id.tab_contact, R.id.tab_call_record, R.id.tab_dialer, R.id.tab_message, R.id.tab_setting};
     ViewPager contentPage;
-
+    private static final int PERMISSION_REQUEST_CODE = 10;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         getWindow().setBackgroundDrawable(null);
         super.onCreate(savedInstanceState);
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
+        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_DENIED){
+            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},PERMISSION_REQUEST_CODE);
+        }else {
+            initView();
+        }
+    }
+
+    private void initView() {
         setContentView(R.layout.activity_main);
         ViewStub tabStub = findViewById(R.id.tabs_stub);
         tabStub.inflate();
@@ -111,5 +122,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             findViewById(TAB_IDS[i]).setSelected(tabIndex == i);
         }
         contentPage.setCurrentItem(tabIndex, true);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+            initView();
+        }else {
+            finish();
+        }
     }
 }
