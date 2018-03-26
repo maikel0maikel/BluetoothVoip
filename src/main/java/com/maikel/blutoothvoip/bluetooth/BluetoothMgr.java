@@ -5,7 +5,8 @@ import android.bluetooth.BluetoothDevice;
 import android.content.IntentFilter;
 
 import com.maikel.blutoothvoip.BluetoothApplication;
-import com.maikel.blutoothvoip.bluetooth.observ.BluetoothObserver;
+import com.maikel.blutoothvoip.bluetooth.observ.BluetoothSubjectManager;
+import com.maikel.blutoothvoip.constant.Constants;
 import com.maikel.blutoothvoip.receiver.BluetoothReceiver;
 
 /**
@@ -45,6 +46,8 @@ public class BluetoothMgr implements IBluetoothManager {
         }
         if (!bluetoothManager.isEnabled()) {
             bluetoothManager.enable();
+        }else {
+            BluetoothSubjectManager.getInstance().notifyOpenState(Constants.BTState.STATE_ON);
         }
     }
 
@@ -54,12 +57,19 @@ public class BluetoothMgr implements IBluetoothManager {
         unRegistBluetoothReceiver();
     }
 
+    @Override
+    public void startDiscovery() {
+        bluetoothManager.startDiscovery();
+    }
+
     private boolean disableBluetooth() {
         if (bluetoothManager == null) {
             return true;
         }
         if (bluetoothManager.isEnabled()) {
             bluetoothManager.disable();
+        }else {
+            BluetoothSubjectManager.getInstance().notifyOpenState(Constants.BTState.STATE_OFF);
         }
         return false;
     }
@@ -71,3 +81,4 @@ public class BluetoothMgr implements IBluetoothManager {
     }
 
 }
+
