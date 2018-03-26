@@ -20,7 +20,7 @@ public class BluetoothReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
-        Log.e(TAG, "action=" + TAG);
+        Log.e(TAG, "action=" + intent.getAction());
         if (BluetoothAdapter.ACTION_STATE_CHANGED.equals(action)) {
             int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.ERROR);
             switch (state) {
@@ -50,11 +50,10 @@ public class BluetoothReceiver extends BroadcastReceiver {
                     break;
             }
         } else if (BluetoothDevice.ACTION_FOUND.equals(action)) {
-            String deviceName = intent.getStringExtra(BluetoothDevice.EXTRA_NAME);
             BluetoothDevice bluetoothDevice = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
             if (bluetoothDevice != null) {
                 BluetoothSubjectManager.getInstance().notifyDeviceFound(bluetoothDevice.getName() == null ?
-                        deviceName : bluetoothDevice.getName(), bluetoothDevice.getAddress());
+                        bluetoothDevice.getAddress() : bluetoothDevice.getName(), bluetoothDevice.getAddress());
             }
         } else if (BluetoothDevice.ACTION_BOND_STATE_CHANGED.equals(action)) {
             int state = intent.getIntExtra(BluetoothDevice.EXTRA_BOND_STATE, BluetoothDevice.ERROR);
