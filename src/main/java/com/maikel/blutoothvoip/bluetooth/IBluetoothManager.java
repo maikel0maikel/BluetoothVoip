@@ -10,5 +10,5 @@ public interface IBluetoothManager {
 
     void closeBluetooth();
 
-
+    void startDiscovery();
 }
