@@ -6,4 +6,17 @@
     <string name="label_message">Message</string>
     <string name="label_setting">Setting</string>
     <string name="label_connect_device">Connect Device</string>
+    <string name="label_bt_openning">蓝牙正在打开</string>
+    <string name="lable_bt_opened">蓝牙已经打开</string>
+    <string name="lable_bt_closing">蓝牙正在关闭</string>
+    <string name="lable_bt_closed">蓝牙已经关闭</string>
+    <string name="label_bt_scan">正在查找设备</string>
+    <string name="label_bt_scaned">已完成查找</string>
+    <string name="label_bt_bounding">设备正在绑定</string>
+    <string name="lable_bt_bounded">设备已经绑定</string>
+    <string name="label_bt_boundnone">设备未绑定</string>
+    <string name="label_bt_connecting">设备正在连接</string>
+    <string name="label_bt_connected">设备已连接</string>
+    <string name="label_bt_disconnecting">设备正在断开</string>
+    <string name="label_bt_disconnected">设备已断开</string>
 </resources>
