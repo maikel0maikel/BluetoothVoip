@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.Build;
@@ -23,7 +22,6 @@ import com.maikel.blutoothvoip.R;
 public class SwitchButton extends View implements View.OnTouchListener {
 
     private Paint mPaint;//
-    private Matrix matrix;
     private Bitmap mOFFBitmap;
     private Bitmap mONBitmap;
     private Bitmap mSplitBitmap;
@@ -66,7 +64,6 @@ public class SwitchButton extends View implements View.OnTouchListener {
 
     private void init() {
         mPaint = new Paint();
-        matrix = new Matrix();
         mOFFBitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_switch_off);
         mONBitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_switch_on);
         mSplitBitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_switch_split);
@@ -89,30 +86,40 @@ public class SwitchButton extends View implements View.OnTouchListener {
         isEnable = enable;
     }
 
-    public void setSwitchChangeListener(OnSwitchChangeListener l){
+    public void setSwitchChangeListener(OnSwitchChangeListener l) {
         listener = l;
     }
-//    @Override
-//    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-//        int paddingTop = getPaddingTop();
-//        int paddingLeft = getPaddingLeft();
-//        int paddingRight = getPaddingRight();
-//        int paddingBottom = getPaddingBottom();
-//
-//        int mesureW = getMeasuredWidth();
-//        int mesureH = getMeasuredHeight();
-//
-//        setMeasuredDimension(mesureW,mesureH);
-//
-//    }
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        int paddingLeft = getPaddingLeft();
+        int paddingTop = getPaddingTop();
+        int paddingRight = getPaddingRight();
+        int paddingBottom = getPaddingBottom();
+        int widthMeasureMode = MeasureSpec.getMode(widthMeasureSpec);
+        int widthSize = MeasureSpec.getSize(widthMeasureSpec)-paddingLeft-paddingRight;
+        int heightMeasureMode = MeasureSpec.getMode(heightMeasureSpec);
+        int heightSize = MeasureSpec.getSize(heightMeasureSpec)-paddingTop-paddingBottom;
+
+        if (widthMeasureMode == MeasureSpec.AT_MOST && heightMeasureMode == MeasureSpec.AT_MOST) {
+            setMeasuredDimension(mOFFBitmap.getWidth(),mOFFBitmap.getHeight());
+        }else if (widthMeasureMode == MeasureSpec.AT_MOST){
+            setMeasuredDimension(mOFFBitmap.getWidth(),heightSize);
+        }else if (heightMeasureMode == MeasureSpec.AT_MOST){
+            setMeasuredDimension(widthSize,mOFFBitmap.getHeight());
+        }
+    }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        int paddingLeft = getPaddingLeft();
+        int paddingTop = getPaddingTop();
         if (mToggleX < mONBitmap.getWidth() / 2) {
-            canvas.drawBitmap(mOFFBitmap, matrix, mPaint);
+            canvas.drawBitmap(mOFFBitmap,paddingLeft,paddingTop, mPaint);
         } else {
-            canvas.drawBitmap(mONBitmap, matrix, mPaint);
+            canvas.drawBitmap(mONBitmap,paddingLeft, paddingTop, mPaint);
         }
         float x;
         if (isSmooth) {
@@ -130,7 +137,7 @@ public class SwitchButton extends View implements View.OnTouchListener {
         } else if (x > (mONBitmap.getWidth() - mSplitBitmap.getWidth() / 2)) {
             x = mONBitmap.getWidth() - mSplitBitmap.getWidth() / 2;
         }
-        canvas.drawBitmap(mSplitBitmap, x, 0, mPaint);
+        canvas.drawBitmap(mSplitBitmap, x,paddingTop, mPaint);
     }
 
     @Override
