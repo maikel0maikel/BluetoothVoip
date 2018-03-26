@@ -2,6 +2,7 @@ package com.maikel.blutoothvoip.setting;
 
 import com.maikel.blutoothvoip.BasePresenter;
 import com.maikel.blutoothvoip.BaseView;
+import com.maikel.blutoothvoip.bean.BTDevice;
 import com.maikel.blutoothvoip.bluetooth.observ.BluetoothObserver;
 
 /**
@@ -16,6 +17,7 @@ public interface ISettingController {
         void notifyConnectedState(int connectedState);
         void notifyScanStarted();
         void notifyScanFinished();
+        void notifyDeviceFound(BTDevice btDevice);
     }
 
     public interface SettingController extends BasePresenter,BluetoothObserver{
