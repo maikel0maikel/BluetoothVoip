@@ -24,31 +24,28 @@ import javax.net.ssl.X509TrustManager;
  * Created by maikel on 2018/3/30.
  */
 
-public class HttpTask implements Callable<String>{
-    private String requestUrl = null;
-    private static final int READ_TIME_OUT = 1000*10;
+public class HttpTask implements Callable<HttpResponse> {
+    private static final String TAG = "HttpTask";
+    private static final int READ_TIME_OUT = 1000 * 10;
     private static final int CONNECT_TIME_OUT = READ_TIME_OUT;
-    HttpTask(String requestUrl){
-        this.requestUrl = requestUrl;
+    private HttpRequest mRequest;
+
+    HttpTask(HttpRequest request) {
+        this.mRequest = request;
     }
-    /**
-     * 设置不验证主机
-     */
+
+
     private static final HostnameVerifier DO_NOT_VERIFY = new HostnameVerifier() {
         public boolean verify(String hostname, SSLSession session) {
             return true;
         }
     };
-    /**
-     * Trust every server - dont check for any certificate
-     */
+
     private static void trustAllHosts() {
-        final String TAG = "trustAllHosts";
-        // Create a trust manager that does not validate certificate chains
-        TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
+        TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
 
             public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-                return new java.security.cert.X509Certificate[] {};
+                return new java.security.cert.X509Certificate[]{};
             }
 
             public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
@@ -58,9 +55,7 @@ public class HttpTask implements Callable<String>{
             public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
                 Log.i(TAG, "checkServerTrusted");
             }
-        } };
-
-        // Install the all-trusting trust manager
+        }};
         try {
             SSLContext sc = SSLContext.getInstance("TLS");
             sc.init(null, trustAllCerts, new java.security.SecureRandom());
@@ -69,6 +64,7 @@ public class HttpTask implements Callable<String>{
             e.printStackTrace();
         }
     }
+
     /**
      * Computes a result, or throws an exception if unable to do so.
      *
@@ -76,38 +72,60 @@ public class HttpTask implements Callable<String>{
      * @throws Exception if unable to compute a result
      */
     @Override
-    public String call() throws Exception {
+    public HttpResponse call() throws Exception {
+        if (this.mRequest == null) {
+            return new HttpResponse("request is null", HttpCodes.HTTP_FAILURE);
+        }
+        if (this.mRequest.getUrl() == null || this.mRequest.getUrl().length() == 0) {
+
+            return new HttpResponse("your url is empty please check", HttpCodes.HTTP_FAILURE);
+        }
         BufferedReader bufferedReader = null;
         HttpURLConnection con = null;
+        HttpResponse response = new HttpResponse();
+        int code = 0;
+        String result = null;
         try {
-            URL url = new URL(requestUrl);
+            URL url = new URL(mRequest.getUrl());
             if (url.getProtocol().toLowerCase().equals("https")) {
                 trustAllHosts();
-                HttpsURLConnection https = (HttpsURLConnection)url.openConnection();
+                HttpsURLConnection https = (HttpsURLConnection) url.openConnection();
                 https.setHostnameVerifier(DO_NOT_VERIFY);
                 con = https;
             } else {
-                con = (HttpURLConnection)url.openConnection();
+                con = (HttpURLConnection) url.openConnection();
             }
-            con.setRequestMethod("GET");
-           // con.setRequestProperty("user-agent","Mozilla/5.0 (iPhone; U; CPU iPhone OS 3_0 like Mac OS X; en-us) AppleWebKit/528.18 (KHTML, like Gecko) Version/4.0 Mobile/7A341 Safari/528.16");
+            if (mRequest.getHttpMethod() == HttpMethod.GET) {
+                con.setRequestMethod("GET");
+            } else if (mRequest.getHttpMethod() == HttpMethod.POST) {
+                con.setRequestMethod("POST");
+            }
+            if (mRequest.getHead() != null) {
+                con.setRequestProperty(mRequest.getHead().getKey(), mRequest.getHead().getValue());
+            }
             con.setConnectTimeout(CONNECT_TIME_OUT);
             con.setReadTimeout(READ_TIME_OUT);
             InputStream is = con.getInputStream();
             bufferedReader = new BufferedReader(new InputStreamReader(is));
             String readLine = null;
             StringBuilder builder = new StringBuilder();
-            while ((readLine = bufferedReader.readLine())!=null){
+            while ((readLine = bufferedReader.readLine()) != null) {
                 builder.append(readLine);
             }
             con.disconnect();
-            return bufferedReader.toString();
+            result = builder.toString();
+            code = HttpCodes.HTTP_OK;
+            builder.setLength(0);
         } catch (MalformedURLException e) {
             e.printStackTrace();
+            result = e.getMessage();
+            code = HttpCodes.HTTP_FAILURE;
         } catch (IOException e) {
             e.printStackTrace();
-        }finally {
-            if (bufferedReader!=null){
+            result = e.getMessage();
+            code = HttpCodes.HTTP_FAILURE;
+        } finally {
+            if (bufferedReader != null) {
                 try {
                     bufferedReader.close();
                 } catch (IOException e) {
@@ -115,6 +133,8 @@ public class HttpTask implements Callable<String>{
                 }
             }
         }
-        return null;
+        response.setResponse(result);
+        response.setCode(code);
+        return response;
     }
 }
