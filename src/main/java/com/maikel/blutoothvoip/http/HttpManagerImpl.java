@@ -34,8 +34,7 @@ public class HttpManagerImpl implements IHttpManager {
 
     @Override
     public void submmitRequest(final HttpRequest request) {
-        final HttpTask task = new HttpTask(request);
-        FutureTask<HttpResponse> futureTask = new FutureTask<HttpResponse>(task) {
+       FutureTask<HttpResponse> futureTask = new FutureTask<HttpResponse>(request.getTask()) {
             @Override
             protected void done() {
                 HttpResponse response;
@@ -43,10 +42,10 @@ public class HttpManagerImpl implements IHttpManager {
                     response = get();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
-                    response = new HttpResponse(e.getMessage(),HttpCodes.HTTP_FAILURE);
+                    response = new HttpResponse(null,HttpCodes.HTTP_FAILURE,e.getMessage());
                 } catch (ExecutionException e) {
                     e.printStackTrace();
-                    response = new HttpResponse(e.getMessage(),HttpCodes.HTTP_FAILURE);
+                    response = new HttpResponse(null,HttpCodes.HTTP_FAILURE,e.getMessage());
                 }
                 request.onResponse(response);
             }
